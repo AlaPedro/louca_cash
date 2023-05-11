@@ -9,16 +9,16 @@ export default function Dashboard() {
     const [loucaCash, setLoucaCash] = useState<number>(0);
     const [loucaList, setLoucaList] = useState<LcData[]>([]);
 
-    function addCash() {
-        setLoucaCash(loucaCash + 1);
-        localStorage.setItem("loucaCash", JSON.stringify(loucaCash + 1));
-        handleAddCash();
-    }
+    // function addCash() {
+    //     setLoucaCash(loucaCash + 1);
+    //     localStorage.setItem("loucaCash", JSON.stringify(loucaCash + 1));
+    //     handleAddCash();
+    // }
 
-    function resetCash() {
-        setLoucaCash(0);
-        localStorage.removeItem("loucaCash");
-    }
+    // function resetCash() {
+    //     setLoucaCash(0);
+    //     localStorage.removeItem("loucaCash");
+    // }
 
     async function handleAddCash() {
         try {
@@ -29,6 +29,7 @@ export default function Dashboard() {
                 return console.log(error);
             }
             handleReload();
+            setLoucaCash(loucaCash + 1);
         } catch (err) {
             console.log(err);
         }
@@ -44,7 +45,25 @@ export default function Dashboard() {
 
             const lcData = data as LcData[];
 
-            setLoucaList(lcData);
+            const lcFormatedDate = lcData.map((item) => {
+                const oldDate = new Date(item.created_at);
+                const dia = oldDate.getDate().toString().padStart(2, "0");
+                const mes = (oldDate.getMonth() + 1)
+                    .toString()
+                    .padStart(2, "0");
+                const ano = oldDate.getFullYear();
+                const hora = oldDate.getHours().toString().padStart(2, "0");
+                const minuto = oldDate.getMinutes().toString().padStart(2, "0");
+                return {
+                    ...item,
+                    dataFormatada: `louça lavada na data ${dia}/${mes}/${ano} as ${hora}:${minuto}`,
+                };
+            });
+
+            console.log(lcFormatedDate);
+
+            setLoucaCash(lcData.length);
+            setLoucaList(lcFormatedDate);
 
             console.log(data);
         } catch (err) {
@@ -63,7 +82,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         getSupaData();
-        setLoucaCash(Number(localStorage.getItem("loucaCash")));
+
         localStorage?.getItem("userAccessToken")
             ? console.log("Acesso permitido")
             : handleRedirectToHome();
@@ -83,11 +102,7 @@ export default function Dashboard() {
                         <span className="text-white text-lg font-bold">
                             {loucaCash}
                         </span>
-                        <MdWaterDrop
-                            color="#20b2aa"
-                            size={18}
-                            onClick={resetCash}
-                        />
+                        <MdWaterDrop color="#20b2aa" size={18} />
                     </div>
                 </div>
             </header>
@@ -98,11 +113,14 @@ export default function Dashboard() {
                 </h1>
 
                 {
-                    <div className="text-white flex flex-col">
+                    <div className="text-white flex flex-col gap-2 w-4/5 m-auto">
                         {loucaList.map((item) => (
-                            <div className="flex gap-6 justify-center">
+                            <div
+                                key={item.id}
+                                className="flex gap-6 justify-center bg-louca-green h-10 items-center rounded-md"
+                            >
                                 <span>{item.lou_num}</span>
-                                <span>{item.created_at}</span>
+                                <span>{item.dataFormatada}</span>
                             </div>
                         ))}
                     </div>
@@ -111,7 +129,7 @@ export default function Dashboard() {
 
             <footer className="h-20 flex items-center bg-purple-600 shadow-lg fixed w-full overflow-hidden bottom-0">
                 <div className="w-16 h-16 bg-[#111111] rounded-full text-white items-center flex justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <button onClick={addCash}>
+                    <button onClick={handleAddCash}>
                         <BsPlus size={40} />
                     </button>
                 </div>
