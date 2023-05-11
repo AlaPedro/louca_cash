@@ -97,7 +97,7 @@ export default function Home() {
                         <span className="ml-2 text-white text-sm">Email</span>
                         <input
                             placeholder="Digite seu email"
-                            className="h-8 rounded-md p-2 shadow-xl"
+                            className="h-10 rounded-md p-2 shadow-xl outline-none"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -108,7 +108,7 @@ export default function Home() {
                         <input
                             type="password"
                             placeholder="Digite sua senha"
-                            className="h-8 rounded-md p-2 shadow-xl"
+                            className="h-10 rounded-md p-2 shadow-xl outline-none"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />

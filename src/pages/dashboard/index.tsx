@@ -3,9 +3,11 @@ import { BsPlus } from "react-icons/bs";
 import { useState, useEffect } from "react";
 import { supabase } from "@/services/supabase";
 import { useRouter } from "next/router";
+import { spawn } from "child_process";
 
 export default function Dashboard() {
     const [loucaCash, setLoucaCash] = useState<number>(0);
+    const [loucaList, setLoucaList] = useState<LcData[]>([]);
 
     function addCash() {
         setLoucaCash(loucaCash + 1);
@@ -22,15 +24,31 @@ export default function Dashboard() {
         try {
             const { data, error } = await supabase
                 .from("lc_data")
-                .insert({ lou_num: `${loucaCash + 1}` });
-
+                .insert([{ lou_num: `${loucaCash + 1}` }]);
             if (error) {
-                return console.log("error supabase adding items", error);
+                return console.log(error);
             }
-
-            alert("foi");
+            handleReload();
         } catch (err) {
             console.log(err);
+        }
+    }
+
+    async function getSupaData() {
+        try {
+            let { data, error } = await supabase.from("lc_data").select("*");
+
+            if (error) {
+                return console.log(error);
+            }
+
+            const lcData = data as LcData[];
+
+            setLoucaList(lcData);
+
+            console.log(data);
+        } catch (err) {
+            return console.log(err);
         }
     }
 
@@ -39,12 +57,19 @@ export default function Dashboard() {
         router.push("/");
     }
 
+    function handleReload() {
+        router.reload();
+    }
+
     useEffect(() => {
+        getSupaData();
         setLoucaCash(Number(localStorage.getItem("loucaCash")));
         localStorage?.getItem("userAccessToken")
             ? console.log("Acesso permitido")
             : handleRedirectToHome();
     }, []);
+
+    console.log(loucaList);
 
     return (
         <>
@@ -71,6 +96,17 @@ export default function Dashboard() {
                 <h1 className="text-white text-center text-lg font-semibold mt-4">
                     Histórico de louças lavadas
                 </h1>
+
+                {
+                    <div className="text-white flex flex-col">
+                        {loucaList.map((item) => (
+                            <div className="flex gap-6 justify-center">
+                                <span>{item.lou_num}</span>
+                                <span>{item.created_at}</span>
+                            </div>
+                        ))}
+                    </div>
+                }
             </main>
 
             <footer className="h-20 flex items-center bg-purple-600 shadow-lg fixed w-full overflow-hidden bottom-0">
