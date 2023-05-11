@@ -1,15 +1,16 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useState, useEffect, use } from "react";
+import { useState } from "react";
 import { supabase } from "@/services/supabase";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function Home() {
+export default function CreateAccount() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-    function verifyDataToLogin() {
+    function verifyDataToCreateAccount() {
         if (email === "") {
             return toastWarn("Preencha seu email");
         }
@@ -21,28 +22,28 @@ export default function Home() {
         }
         if (password === "" || !isValidPassword(password)) {
             return toastWarn(
-                "Sua senha tem mais de 7 caracteres, Pelo menos uma letra maiúscula e pelo menos um número"
+                "Sua senha deve ter mais de 7 caracteres, Pelo menos uma letra maiúscula e pelo menos um número"
             );
         }
-        return handleLogin();
+        if (confirmPassword === "") {
+            return toastWarn("Confirme sua senha");
+        }
+        if (confirmPassword !== password) {
+            return toastWarn("Suas senhas precisam ser iguais");
+        }
+        handleCreateUser();
+        toastSuccess("Conta criada com sucesso!");
+        handleRedirectToConfirmEmail();
     }
 
-    async function handleLogin() {
+    async function handleCreateUser() {
         try {
-            let { data, error } = await supabase.auth.signInWithPassword({
+            let { data, error } = await supabase.auth.signUp({
                 email: email,
                 password: password,
             });
-
             if (error) {
                 return console.log(error);
-            }
-            if (!error && data.session) {
-                localStorage.setItem(
-                    "userAccessToken",
-                    data.session.access_token
-                );
-                handleRedirectToDashboard();
             }
         } catch (error) {
             return console.log(error);
@@ -72,14 +73,23 @@ export default function Home() {
         });
     };
 
-    const router = useRouter();
-    function handleRedirectToDashboard() {
-        router.push("/dashboard");
-    }
+    const toastSuccess = (message: string) => {
+        toast.success(message, {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+        });
+    };
 
-    useEffect(() => {
-        localStorage.removeItem("userAccessToken");
-    }, []);
+    const router = useRouter();
+    function handleRedirectToConfirmEmail() {
+        router.push("/confirm-email");
+    }
     return (
         <>
             <div className="h-screen flex items-center justify-center bg-purple-600 shadow-lg w-screen overflow-hidden">
@@ -104,7 +114,9 @@ export default function Home() {
                     </div>
 
                     <div className="flex flex-col w-full">
-                        <span className="ml-2 text-white text-sm">Senha</span>
+                        <span className="ml-2 text-white text-sm shadow-xl">
+                            Senha
+                        </span>
                         <input
                             type="password"
                             placeholder="Digite sua senha"
@@ -114,21 +126,35 @@ export default function Home() {
                         />
                     </div>
 
+                    <div className="flex flex-col w-full">
+                        <span className="ml-2 text-white text-sm">
+                            Confirme sua senha
+                        </span>
+                        <input
+                            type="password"
+                            placeholder="Confirme sua senha"
+                            className="h-8 rounded-md p-2 shadow-xl"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                    </div>
+
                     <div className="w-64 flex flex-col items-center gap-1">
                         <button
                             className="bg-louca-green w-full rounded-md h-10 font-semibold shadow-xl"
-                            onClick={verifyDataToLogin}
+                            onClick={verifyDataToCreateAccount}
                         >
-                            Entrar
+                            Criar conta
                         </button>
-                        <Link href={"/criar-conta"}>
+                        <Link href={"/"}>
                             <span className="text-sm border-b border-black/50">
-                                Ainda não tem uma conta? clique aqui
+                                já tem uma conta? clique aqui
                             </span>
                         </Link>
                     </div>
                 </div>
             </div>
+
             <ToastContainer
                 position="bottom-center"
                 autoClose={5000}
