@@ -1,84 +1,82 @@
-import { MdWaterDrop } from "react-icons/md";
-import { BsPlus } from "react-icons/bs";
-import { useState, useEffect } from "react";
-import { supabase } from "@/services/supabase";
-import { useRouter } from "next/router";
-import { motion, AnimatePresence, useMotionValue } from "framer-motion";
-import { info } from "console";
-import { type } from "os";
+import { MdWaterDrop } from "react-icons/md"
+import { BsPlus } from "react-icons/bs"
+import { useState, useEffect } from "react"
+import { supabase } from "@/services/supabase"
+import { useRouter } from "next/router"
+import { motion, AnimatePresence, useMotionValue } from "framer-motion"
+import { info } from "console"
+import { type } from "os"
 
 export default function Dashboard() {
-    const [loucaCash, setLoucaCash] = useState<number>(0);
-    const [loucaList, setLoucaList] = useState<LcData[]>([]);
-    const [navIsOpen, setNavIsOpen] = useState<boolean>(false);
+    const [loucaCash, setLoucaCash] = useState<number>(0)
+    const [loucaList, setLoucaList] = useState<LcData[]>([])
+    const [navIsOpen, setNavIsOpen] = useState<boolean>(false)
 
     function openCloseNav() {
-        setNavIsOpen(!navIsOpen);
+        setNavIsOpen(!navIsOpen)
     }
 
     async function handleAddCash() {
         try {
             const { data, error } = await supabase
                 .from("lc_data")
-                .insert([{ lou_num: `${loucaCash + 1}` }]);
+                .insert([{ lou_num: `${loucaCash + 1}` }])
             if (error) {
-                return console.log(error);
+                return console.log(error)
             }
-            handleReload();
-            setLoucaCash(loucaCash + 1);
+            handleReload()
+            setLoucaCash(loucaCash + 1)
         } catch (err) {
-            console.log(err);
+            console.log(err)
         }
     }
 
     async function getSupaData() {
         try {
-            let { data, error } = await supabase.from("lc_data").select("*");
+            let { data, error } = await supabase.from("lc_data").select("*")
 
             if (error) {
-                return console.log(error);
+                return console.log(error)
             }
 
-            const lcData = data as LcData[];
+            const lcData = data as LcData[]
 
             const lcFormatedDate = lcData.map((item) => {
-                const oldDate = new Date(item.created_at);
-                const dia = oldDate.getDate().toString().padStart(2, "0");
-                const mes = (oldDate.getMonth() + 1)
-                    .toString()
-                    .padStart(2, "0");
-                const ano = oldDate.getFullYear();
-                const hora = oldDate.getHours().toString().padStart(2, "0");
-                const minuto = oldDate.getMinutes().toString().padStart(2, "0");
+                const oldDate = new Date(item.created_at)
+                const dia = oldDate.getDate().toString().padStart(2, "0")
+                const mes = (oldDate.getMonth() + 1).toString().padStart(2, "0")
+                const ano = oldDate.getFullYear()
+                const hora = oldDate.getHours().toString().padStart(2, "0")
+                const minuto = oldDate.getMinutes().toString().padStart(2, "0")
                 return {
                     ...item,
                     dataFormatada: `louça lavada na data ${dia}/${mes}/${ano} as ${hora}:${minuto}`,
-                };
-            });
+                }
+            })
 
-            setLoucaCash(lcData.length);
-            setLoucaList(lcFormatedDate);
+            setLoucaCash(lcData.length)
+            setLoucaList(lcFormatedDate)
         } catch (err) {
-            return console.log(err);
+            return console.log(err)
         }
     }
 
-    const router = useRouter();
+    const router = useRouter()
     function handleRedirectToHome() {
-        router.push("/");
+        router.push("/")
     }
 
     function handleReload() {
-        router.reload();
+        router.reload()
     }
 
     useEffect(() => {
-        getSupaData();
+        getSupaData()
 
         localStorage?.getItem("userAccessToken")
             ? console.log("Acesso permitido")
-            : handleRedirectToHome();
-    }, []);
+            : handleRedirectToHome()
+    }, [])
 
     return (
         <>
@@ -171,5 +169,5 @@ export default function Dashboard() {
                 </AnimatePresence>
             )}
         </>
-    );
+    )
 }

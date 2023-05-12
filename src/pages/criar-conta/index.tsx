@@ -1,39 +1,39 @@
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { useState } from "react";
-import { supabase } from "@/services/supabase";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/router"
+import Link from "next/link"
+import { useState } from "react"
+import { supabase } from "@/services/supabase"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 export default function CreateAccount() {
-    const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
-    const [confirmPassword, setConfirmPassword] = useState<string>("");
+    const [email, setEmail] = useState<string>("")
+    const [password, setPassword] = useState<string>("")
+    const [confirmPassword, setConfirmPassword] = useState<string>("")
 
     function verifyDataToCreateAccount() {
         if (email === "") {
-            return toastWarn("Preencha seu email");
+            return toastWarn("Preencha seu email")
         }
         if (email === "" || !isValidEmail(email)) {
-            return toastWarn("Preencha um email válido");
+            return toastWarn("Preencha um email válido")
         }
         if (password === "") {
-            return toastWarn("Preencha sua senha");
+            return toastWarn("Preencha sua senha")
         }
         if (password === "" || !isValidPassword(password)) {
             return toastWarn(
                 "Sua senha deve ter mais de 7 caracteres, Pelo menos uma letra maiúscula e pelo menos um número"
-            );
+            )
         }
         if (confirmPassword === "") {
-            return toastWarn("Confirme sua senha");
+            return toastWarn("Confirme sua senha")
         }
         if (confirmPassword !== password) {
-            return toastWarn("Suas senhas precisam ser iguais");
+            return toastWarn("Suas senhas precisam ser iguais")
         }
-        handleCreateUser();
-        toastSuccess("Conta criada com sucesso!");
-        handleRedirectToConfirmEmail();
+        handleCreateUser()
+        toastSuccess("Conta criada com sucesso!")
+        handleRedirectToConfirmEmail()
     }
 
     async function handleCreateUser() {
@@ -41,23 +41,23 @@ export default function CreateAccount() {
             let { data, error } = await supabase.auth.signUp({
                 email: email,
                 password: password,
-            });
+            })
             if (error) {
-                return console.log(error);
+                return console.log(error)
             }
         } catch (error) {
-            return console.log(error);
+            return console.log(error)
         }
     }
 
     function isValidEmail(email: string) {
-        const padrao = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        return padrao.test(email);
+        const padrao = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        return padrao.test(email)
     }
 
     function isValidPassword(password: string) {
-        const padrao = /^(?=.*[A-Z])(?=.*\d)(?=.*[^\s])(.{8,})$/;
-        return padrao.test(password);
+        const padrao = /^(?=.*[A-Z])(?=.*\d)(?=.*[^\s])(.{8,})$/
+        return padrao.test(password)
     }
 
     const toastWarn = (message: string) => {
@@ -70,8 +70,8 @@ export default function CreateAccount() {
             draggable: true,
             progress: undefined,
             theme: "dark",
-        });
-    };
+        })
+    }
 
     const toastSuccess = (message: string) => {
         toast.success(message, {
@@ -83,12 +83,12 @@ export default function CreateAccount() {
             draggable: true,
             progress: undefined,
             theme: "dark",
-        });
-    };
+        })
+    }
 
-    const router = useRouter();
+    const router = useRouter()
     function handleRedirectToConfirmEmail() {
-        router.push("/confirm-email");
+        router.push("/confirm-email")
     }
     return (
         <>
@@ -168,5 +168,5 @@ export default function CreateAccount() {
                 theme="dark"
             />
         </>
-    );
+    )
 }

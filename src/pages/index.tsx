@@ -1,30 +1,30 @@
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { useState, useEffect, use } from "react";
-import { supabase } from "@/services/supabase";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/router"
+import Link from "next/link"
+import { useState, useEffect, use } from "react"
+import { supabase } from "@/services/supabase"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 export default function Home() {
-    const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
+    const [email, setEmail] = useState<string>("")
+    const [password, setPassword] = useState<string>("")
 
     function verifyDataToLogin() {
         if (email === "") {
-            return toastWarn("Preencha seu email");
+            return toastWarn("Preencha seu email")
         }
         if (email === "" || !isValidEmail(email)) {
-            return toastWarn("Preencha um email válido");
+            return toastWarn("Preencha um email válido")
         }
         if (password === "") {
-            return toastWarn("Preencha sua senha");
+            return toastWarn("Preencha sua senha")
         }
         if (password === "" || !isValidPassword(password)) {
             return toastWarn(
                 "Sua senha tem mais de 7 caracteres, Pelo menos uma letra maiúscula e pelo menos um número"
-            );
+            )
         }
-        return handleLogin();
+        return handleLogin()
     }
 
     async function handleLogin() {
@@ -32,31 +32,31 @@ export default function Home() {
             let { data, error } = await supabase.auth.signInWithPassword({
                 email: email,
                 password: password,
-            });
+            })
 
             if (error) {
-                return console.log(error);
+                return console.log(error)
             }
             if (!error && data.session) {
                 localStorage.setItem(
                     "userAccessToken",
                     data.session.access_token
-                );
-                handleRedirectToDashboard();
+                )
+                handleRedirectToDashboard()
             }
         } catch (error) {
-            return console.log(error);
+            return console.log(error)
         }
     }
 
     function isValidEmail(email: string) {
-        const padrao = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        return padrao.test(email);
+        const padrao = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+        return padrao.test(email)
     }
 
     function isValidPassword(password: string) {
-        const padrao = /^(?=.*[A-Z])(?=.*\d)(?=.*[^\s])(.{8,})$/;
-        return padrao.test(password);
+        const padrao = /^(?=.*[A-Z])(?=.*\d)(?=.*[^\s])(.{8,})$/
+        return padrao.test(password)
     }
 
     const toastWarn = (message: string) => {
@@ -69,17 +69,17 @@ export default function Home() {
             draggable: true,
             progress: undefined,
             theme: "dark",
-        });
-    };
+        })
+    }
 
-    const router = useRouter();
+    const router = useRouter()
     function handleRedirectToDashboard() {
-        router.push("/dashboard");
+        router.push("/dashboard")
     }
 
     useEffect(() => {
-        localStorage.removeItem("userAccessToken");
-    }, []);
+        localStorage.removeItem("userAccessToken")
+    }, [])
     return (
         <>
             <div className="h-screen flex items-center justify-center bg-purple-600 shadow-lg w-screen overflow-hidden">
@@ -142,5 +142,5 @@ export default function Home() {
                 theme="dark"
             />
         </>
-    );
+    )
 }
