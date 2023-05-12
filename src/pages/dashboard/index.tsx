@@ -3,22 +3,18 @@ import { BsPlus } from "react-icons/bs";
 import { useState, useEffect } from "react";
 import { supabase } from "@/services/supabase";
 import { useRouter } from "next/router";
-import { spawn } from "child_process";
+import { motion, AnimatePresence, useMotionValue } from "framer-motion";
+import { info } from "console";
+import { type } from "os";
 
 export default function Dashboard() {
     const [loucaCash, setLoucaCash] = useState<number>(0);
     const [loucaList, setLoucaList] = useState<LcData[]>([]);
+    const [navIsOpen, setNavIsOpen] = useState<boolean>(false);
 
-    // function addCash() {
-    //     setLoucaCash(loucaCash + 1);
-    //     localStorage.setItem("loucaCash", JSON.stringify(loucaCash + 1));
-    //     handleAddCash();
-    // }
-
-    // function resetCash() {
-    //     setLoucaCash(0);
-    //     localStorage.removeItem("loucaCash");
-    // }
+    function openCloseNav() {
+        setNavIsOpen(!navIsOpen);
+    }
 
     async function handleAddCash() {
         try {
@@ -60,12 +56,8 @@ export default function Dashboard() {
                 };
             });
 
-            console.log(lcFormatedDate);
-
             setLoucaCash(lcData.length);
             setLoucaList(lcFormatedDate);
-
-            console.log(data);
         } catch (err) {
             return console.log(err);
         }
@@ -88,52 +80,96 @@ export default function Dashboard() {
             : handleRedirectToHome();
     }, []);
 
-    console.log(loucaList);
-
     return (
         <>
-            <header className="h-20 flex items-center bg-purple-600 shadow-lg rounded-br-xl rounded-bl-xl fixed w-full overflow-hidden">
-                <div className="flex max-w-[1000px] w-full justify-between m-auto px-10 items-center">
-                    <h1 className="text-white font-sans font-bold text-2xl">
-                        Louça Cash
-                    </h1>
+            <AnimatePresence>
+                <button onClick={openCloseNav}>
+                    <motion.header
+                        className="h-20 flex items-center bg-purple-600 shadow-lg rounded-br-xl rounded-bl-xl fixed top-0 left-0 right-0"
+                        initial={{ opacity: 1, y: 100 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ stiffness: 50 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        <div className="flex max-w-[1000px] w-full justify-between m-auto px-10 items-center">
+                            <h1 className="text-white font-sans font-bold text-2xl">
+                                Louça Cash
+                            </h1>
 
-                    <div className="flex items-center gap-1">
-                        <span className="text-white text-lg font-bold">
-                            {loucaCash}
-                        </span>
-                        <MdWaterDrop color="#20b2aa" size={18} />
-                    </div>
-                </div>
-            </header>
-
-            <main className="bg-[#111111] h-screen pt-20">
-                <h1 className="text-white text-center text-lg font-semibold mt-4">
-                    Histórico de louças lavadas
-                </h1>
-
-                {
-                    <div className="text-white flex flex-col gap-2 w-4/5 m-auto">
-                        {loucaList.map((item) => (
-                            <div
-                                key={item.id}
-                                className="flex gap-6 justify-center bg-louca-green h-10 items-center rounded-md"
-                            >
-                                <span>{item.lou_num}</span>
-                                <span>{item.dataFormatada}</span>
+                            <div className="flex items-center gap-1">
+                                <span className="text-white text-lg font-bold">
+                                    {loucaCash}
+                                </span>
+                                <MdWaterDrop color="#20b2aa" size={18} />
                             </div>
-                        ))}
-                    </div>
-                }
+                        </div>
+                    </motion.header>
+                </button>
+            </AnimatePresence>
+
+            <div className="pt-16"></div>
+
+            <main className="bg-white h-screen">
+                <div className="flex flex-col justify-center">
+                    <h1 className="text-black text-center text-lg font-semibold mt-4">
+                        Histórico de louças lavadas
+                    </h1>
+                    {
+                        <div className="text-white flex flex-col gap-2 w-4/5 m-auto mb-10">
+                            {loucaList.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="flex gap-6 justify-center bg-[#353535] h-10 items-center rounded-md"
+                                >
+                                    <span className="text-xs xsm:text-base font-semibold">
+                                        {item.lou_num}
+                                    </span>
+                                    <span className="text-xs xsm:text-base font-semibold">
+                                        {item.dataFormatada}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    }
+                </div>
             </main>
 
-            <footer className="h-20 flex items-center bg-purple-600 shadow-lg fixed w-full overflow-hidden bottom-0">
-                <div className="w-16 h-16 bg-[#111111] rounded-full text-white items-center flex justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <button onClick={handleAddCash}>
-                        <BsPlus size={40} />
-                    </button>
-                </div>
-            </footer>
+            {navIsOpen && (
+                <AnimatePresence>
+                    <motion.div
+                        key={"modal"}
+                        initial={{ opacity: 0, y: 0 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        transition={{
+                            type: "spring",
+                            stiffness: 50,
+                        }}
+                        className="fixed inset-0 z-50 overflow-y-auto bg-purple-600"
+                    >
+                        <div className="flex flex-col h-screen justify-center gap-10 text-white">
+                            <button
+                                className="text-xl hover:bg-[#b574f1] h-20"
+                                onClick={handleAddCash}
+                            >
+                                Adicionar nova louça
+                            </button>
+                            <button
+                                className="text-xl hover:bg-[#b574f1] h-20"
+                                onClick={handleRedirectToHome}
+                            >
+                                Sair do Louça Cash
+                            </button>
+                            <button
+                                className="text-xl hover:bg-[#b574f1] h-20"
+                                onClick={openCloseNav}
+                            >
+                                Voltar
+                            </button>
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
+            )}
         </>
     );
 }
