@@ -1,16 +1,16 @@
 import { MdWaterDrop } from "react-icons/md"
-import { BsPlus } from "react-icons/bs"
 import { useState, useEffect } from "react"
 import { supabase } from "@/services/supabase"
 import { useRouter } from "next/router"
-import { motion, AnimatePresence, useMotionValue } from "framer-motion"
-import { info } from "console"
-import { type } from "os"
+import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
 
 export default function Dashboard() {
     const [loucaCash, setLoucaCash] = useState<number>(0)
     const [loucaList, setLoucaList] = useState<LcData[]>([])
     const [navIsOpen, setNavIsOpen] = useState<boolean>(false)
+    const [listIsNull, setListIsNull] = useState<boolean>(true)
+    const [userId, setUserId] = useState("")
 
     function openCloseNav() {
         setNavIsOpen(!navIsOpen)
@@ -20,7 +20,7 @@ export default function Dashboard() {
         try {
             const { data, error } = await supabase
                 .from("lc_data")
-                .insert([{ lou_num: `${loucaCash + 1}` }])
+                .insert([{ lou_num: `${loucaCash + 1}`, user_id: userId }])
             if (error) {
                 return console.log(error)
             }
@@ -54,7 +54,13 @@ export default function Dashboard() {
                 }
             })
 
+            console.log(lcData)
+
             setLoucaCash(lcData.length)
+            if (lcData.length > 0) {
+                setListIsNull(false)
+            }
+
             setLoucaList(lcFormatedDate)
         } catch (err) {
             return console.log(err)
@@ -71,11 +77,12 @@ export default function Dashboard() {
     }
 
     useEffect(() => {
+        const userId: any = localStorage?.getItem("userId")
         getSupaData()
-
         localStorage?.getItem("userAccessToken")
             ? console.log("Acesso permitido")
-            : handleRedirectToHome()
+            : handleRedirectToHome(),
+            setUserId(userId)
     }, [])
 
     return (
@@ -107,11 +114,31 @@ export default function Dashboard() {
 
             <div className="pt-16"></div>
 
-            <main className="bg-white h-screen">
+            {listIsNull ? (
+                <div className="flex justify-center flex-col w-screen items-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <h1 className="font-semibold">
+                        Ainda não temos louças lavadas 😭
+                    </h1>
+                    <Image
+                        alt="Lista vazia"
+                        src={"/box-null.svg"}
+                        width={200}
+                        height={200}
+                        className="pb-4"
+                    />
+                    <button
+                        className="bg-louca-green w-4/5 rounded-md h-10 font-semibold shadow-xl hover:scale-105 transition-all"
+                        onClick={handleAddCash}
+                    >
+                        Adicionar primeira louça
+                    </button>
+                </div>
+            ) : (
                 <div className="flex flex-col justify-center">
                     <h1 className="text-black text-center text-lg font-semibold mt-4">
                         Histórico de louças lavadas
                     </h1>
+
                     {
                         <div className="text-white flex flex-col gap-2 w-4/5 m-auto mb-10">
                             {loucaList.map((item) => (
@@ -130,7 +157,7 @@ export default function Dashboard() {
                         </div>
                     }
                 </div>
-            </main>
+            )}
 
             {navIsOpen && (
                 <AnimatePresence>

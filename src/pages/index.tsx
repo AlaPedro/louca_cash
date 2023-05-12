@@ -37,11 +37,13 @@ export default function Home() {
             if (error) {
                 return console.log(error)
             }
-            if (!error && data.session) {
+            if (!error && data.session && data.user) {
                 localStorage.setItem(
                     "userAccessToken",
                     data.session.access_token
                 )
+                localStorage.setItem("userId", data.user.id)
+
                 handleRedirectToDashboard()
             }
         } catch (error) {
@@ -80,6 +82,7 @@ export default function Home() {
     useEffect(() => {
         localStorage.removeItem("userAccessToken")
     }, [])
+
     return (
         <>
             <div className="h-screen flex items-center justify-center bg-purple-600 shadow-lg w-screen overflow-hidden">
@@ -116,7 +119,7 @@ export default function Home() {
 
                     <div className="w-64 flex flex-col items-center gap-1">
                         <button
-                            className="bg-louca-green w-full rounded-md h-10 font-semibold shadow-xl"
+                            className="bg-louca-green w-full rounded-md h-10 font-semibold shadow-xl hover:scale-105 transition-all"
                             onClick={verifyDataToLogin}
                         >
                             Entrar

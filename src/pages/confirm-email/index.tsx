@@ -10,7 +10,7 @@ export default function CreateAccount() {
 
                     <div>
                         <Link href={"/"}>
-                            <button className="bg-louca-green w-72 h-12 rounded-md text-black font-semibold">
+                            <button className="bg-louca-green w-72 h-12 rounded-md text-black font-semibold hover:scale-105 transition-all">
                                 Ir para página inicial
                             </button>
                         </Link>
