@@ -125,7 +125,7 @@ export default function Home() {
                             Entrar
                         </button>
                         <Link href={"/criar-conta"}>
-                            <span className="text-sm border-b border-black/50">
+                            <span className="text-sm">
                                 Ainda não tem uma conta? clique aqui
                             </span>
                         </Link>

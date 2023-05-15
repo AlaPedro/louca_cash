@@ -147,7 +147,7 @@ export default function CreateAccount() {
                             Criar conta
                         </button>
                         <Link href={"/"}>
-                            <span className="text-sm border-b border-black/50">
+                            <span className="text-sm">
                                 já tem uma conta? clique aqui
                             </span>
                         </Link>

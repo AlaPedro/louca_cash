@@ -9,6 +9,7 @@ export default function Dashboard() {
     const [loucaCash, setLoucaCash] = useState<number>(0)
     const [loucaList, setLoucaList] = useState<LcData[]>([])
     const [navIsOpen, setNavIsOpen] = useState<boolean>(false)
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false)
     const [listIsNull, setListIsNull] = useState<boolean>(true)
     const [userId, setUserId] = useState("")
 
@@ -156,6 +157,26 @@ export default function Dashboard() {
                             ))}
                         </div>
                     }
+                </div>
+            )}
+            <motion.div
+                drag="y"
+                dragConstraints={{ bottom: 0, top: 0 }}
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                className="absolute bottom-0 right-0 rounded-full bg-purple-600 shadow-2xl mr-4 mb-4 w-20 h-20 items-center flex justify-center"
+            >
+                <button
+                    className="w-full h-full"
+                >
+                    <h1 className="text-white text-5xl font-serif">+</h1>
+                </button>
+            </motion.div>
+
+            {modalIsOpen && (
+                <div className="fixed inset-0 z-50 overflow-y-auto backdrop-blur-sm">
+                    <div className=" w-screen flex items-center justify-center h-full"></div>
                 </div>
             )}
 
