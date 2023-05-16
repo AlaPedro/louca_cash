@@ -17,6 +17,10 @@ export default function Dashboard() {
         setNavIsOpen(!navIsOpen)
     }
 
+    function openModal() {
+        setModalIsOpen(!modalIsOpen)
+    }
+
     async function handleAddCash() {
         try {
             const { data, error } = await supabase
@@ -162,21 +166,40 @@ export default function Dashboard() {
             <motion.div
                 drag="y"
                 dragConstraints={{ bottom: 0, top: 0 }}
-                whileHover={{ scale: 1.2 }}
+                whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
+                onClick={openModal}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                className="absolute bottom-0 right-0 rounded-full bg-purple-600 shadow-2xl mr-4 mb-4 w-20 h-20 items-center flex justify-center"
+                className="absolute bottom-0 right-0 rounded-full bg-purple-600 shadow-lg shadow-purple-400 mr-4 mb-4 w-20 h-20 items-center flex justify-center"
             >
-                <button
-                    className="w-full h-full"
-                >
+                <button className="w-full h-full">
                     <h1 className="text-white text-5xl font-serif">+</h1>
                 </button>
             </motion.div>
 
             {modalIsOpen && (
                 <div className="fixed inset-0 z-50 overflow-y-auto backdrop-blur-sm">
-                    <div className=" w-screen flex items-center justify-center h-full"></div>
+                    <div className=" w-screen flex items-center justify-center h-full">
+                        <div className="bg-purple-600 w-96 h-52 flex flex-col justify-center rounded-xl p-4 gap-6 items-center">
+                            <h1 className="text-white text-xl">
+                                Adicionar nova louça
+                            </h1>
+                            <div className="flex items-center justify-center gap-4 w-full">
+                                <button
+                                    className="bg-louca-green w-full rounded-md h-10 font-semibold shadow-xl hover:scale-105 ease-in-out transition-all"
+                                    onClick={handleAddCash}
+                                >
+                                    Adicionar
+                                </button>
+                                <button
+                                    className="bg-[#e32636] w-full rounded-md h-10 font-semibold shadow-xl hover:scale-105 ease-in-out transition-all"
+                                    onClick={openModal}
+                                >
+                                    Voltar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
 
