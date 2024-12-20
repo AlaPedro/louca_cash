@@ -1,27 +1,27 @@
-import { useRouter } from "next/router"
-import Link from "next/link"
-import { useState, useEffect, use } from "react"
-import { supabase } from "@/services/supabase"
-import { ToastContainer, toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import { useRouter } from 'next/router'
+import Link from 'next/link'
+import { useState, useEffect, use } from 'react'
+import { supabase } from '@/services/supabase'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 export default function Home() {
-    const [email, setEmail] = useState<string>("")
-    const [password, setPassword] = useState<string>("")
+    const [email, setEmail] = useState<string>('')
+    const [password, setPassword] = useState<string>('')
 
     function verifyDataToLogin() {
-        if (email === "") {
-            return toastWarn("Preencha seu email")
+        if (email === '') {
+            return toastWarn('Preencha seu email')
         }
-        if (email === "" || !isValidEmail(email)) {
-            return toastWarn("Preencha um email válido")
+        if (email === '' || !isValidEmail(email)) {
+            return toastWarn('Preencha um email válido')
         }
-        if (password === "") {
-            return toastWarn("Preencha sua senha")
+        if (password === '') {
+            return toastWarn('Preencha sua senha')
         }
-        if (password === "" || !isValidPassword(password)) {
+        if (password === '' || !isValidPassword(password)) {
             return toastWarn(
-                "Sua senha tem mais de 7 caracteres, Pelo menos uma letra maiúscula e pelo menos um número"
+                'Sua senha tem mais de 7 caracteres, Pelo menos uma letra maiúscula e pelo menos um número'
             )
         }
         return handleLogin()
@@ -39,10 +39,10 @@ export default function Home() {
             }
             if (!error && data.session && data.user) {
                 localStorage.setItem(
-                    "userAccessToken",
+                    'userAccessToken',
                     data.session.access_token
                 )
-                localStorage.setItem("userId", data.user.id)
+                localStorage.setItem('userId', data.user.id)
 
                 handleRedirectToDashboard()
             }
@@ -63,35 +63,35 @@ export default function Home() {
 
     const toastWarn = (message: string) => {
         toast.warn(message, {
-            position: "top-center",
+            position: 'top-center',
             autoClose: 5000,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: "dark",
+            theme: 'dark',
         })
     }
 
     const router = useRouter()
     function handleRedirectToDashboard() {
-        router.push("/dashboard")
+        router.push('/dashboard')
     }
 
     useEffect(() => {
-        localStorage.removeItem("userAccessToken")
+        localStorage.removeItem('userAccessToken')
     }, [])
 
     return (
         <>
-            <div className="h-screen flex items-center justify-center bg-purple-600 shadow-lg w-screen overflow-hidden">
+            <div className="h-screen flex items-center justify-center bg-sky-300 shadow-lg w-screen overflow-hidden">
                 <div className="flex flex-col items-center w-64 gap-4">
                     <div className="flex items-center flex-col">
                         <h1 className="text-white font-sans font-bold text-2xl">
                             Louça Cash
                         </h1>
-                        <span className="text-[#b574f1] font-semibold">
+                        <span className="text-zinc-950 font-semibold">
                             Ganhe dinheiro lavando pratos 😅
                         </span>
                     </div>
@@ -124,7 +124,7 @@ export default function Home() {
                         >
                             Entrar
                         </button>
-                        <Link href={"/criar-conta"}>
+                        <Link href={'/criar-conta'}>
                             <span className="text-sm">
                                 Ainda não tem uma conta? clique aqui
                             </span>
