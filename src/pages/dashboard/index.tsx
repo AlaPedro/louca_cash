@@ -180,7 +180,7 @@ export default function Dashboard() {
             <AnimatePresence>
                 <button onClick={openCloseNav}>
                     <motion.header
-                        className="h-20 flex items-center bg-sky-300 shadow-lg rounded-br-xl rounded-bl-xl fixed top-0 left-0 right-0"
+                        className="h-20 flex items-center bg-sky-600 shadow-lg rounded-br-xl rounded-bl-xl fixed top-0 left-0 right-0"
                         initial={{ opacity: 1, y: 100 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ stiffness: 50 }}
@@ -228,10 +228,10 @@ export default function Dashboard() {
                     {loucaList.map((item) => (
                         <div
                             key={item.id}
-                            className="flex gap-6 justify-center bg-[#353535] h-auto items-center rounded-md p-4"
+                            className="flex flex-col sm:flex-row gap-6 justify-center bg-[#353535] h-auto items-center rounded-md p-4"
                         >
                             <img
-                                className="rounded-lg drop-shadow-sm shadow-lg w-20"
+                                className="rounded-lg drop-shadow-sm shadow-lg w-60"
                                 src={`https://pyubkabddwrtmwzseorm.supabase.co/storage/v1/object/public/louca-images/${item.image_url}`}
                             />
                             <span className="text-xs xsm:text-base font-semibold">
